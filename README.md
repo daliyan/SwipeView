@@ -8,11 +8,12 @@
   
 
 ```
-  public abstract VH onCreatViewHodler(View v,List<SwipeMenuItem> menuItems,SwipeItemLayout swipeItemLayout,int layoutId);
-    public abstract View onCreateItemLayoutId(ViewGroup parent, int viewType);
-    public abstract List<SwipeMenuItem> creatMenuView(); 
-    public abstract int onCreatLayout();
-    public abstract SwipeItemLayout onCreatSwipeLayout(View v);
+  public abstract VH onCreatViewHodler(View v,List<SwipeMenuItem> menuItems,SwipeItemLayout swipeItemLayout,
+  int layoutId);
+  public abstract View onCreateItemLayoutId(ViewGroup parent, int viewType);
+  public abstract List<SwipeMenuItem> creatMenuView(); 
+  public abstract int onCreatLayout();
+  public abstract SwipeItemLayout onCreatSwipeLayout(View v);
 ```
  -  在Activity中调用：
 
