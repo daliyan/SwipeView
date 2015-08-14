@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="save_btn_normal">#448AFF</color>
+    <color name="save_btn_press">#2962FF</color>
+    <color name="white">#ffffff</color>
+    <color name="light_gray">#CFD8DC</color>
+</resources>
