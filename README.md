@@ -43,3 +43,31 @@
     }
 }
 ```
+- 创建侧滑菜单
+
+```
+	@Override
+    public List<SwipeMenuItem> creatMenuView() {
+        List<SwipeMenuItem> menuItems = new ArrayList<>();
+        menuItems =new ArrayList<>();
+
+        SwipeMenuItem a=new SwipeMenuItem();
+        a.setBackgroundResId(R.drawable.save_btn_bg);
+        a.setWidth((int) dipToPx(60));
+        a.setIcon(null);
+        a.setText("删除");
+        a.setTitleColor(Color.parseColor("#ffffff"));
+        a.setTitleSize(14);
+        menuItems.add(a);
+
+        SwipeMenuItem b=new SwipeMenuItem();
+        b.setBackgroundResId(R.drawable.save_btn_bg);
+        b.setWidth((int) dipToPx(80));
+        b.setIcon(null);
+        b.setText("取消");
+        b.setTitleColor(Color.parseColor("#ffffff"));
+        b.setTitleSize(14);
+        menuItems.add(b);
+        return menuItems;
+    }
+```
