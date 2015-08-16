@@ -13,9 +13,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import akiyama.library.adapter.RecyclerViewAdapter;
-import akiyama.library.swipe.SwipeItemLayout;
-import akiyama.library.swipe.SwipeMenuItem;
+import akiyama.swipe.adapter.RecyclerViewAdapter;
+import akiyama.swipe.swipe.SwipeItemLayout;
+import akiyama.swipe.swipe.SwipeMenuItem;
 
 /**
  * FIXME

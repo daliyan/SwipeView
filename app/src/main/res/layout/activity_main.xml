@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dip"/>-->
 
-    <akiyama.library.swipeView.SwipeRecyclerView
+    <akiyama.swipe.swipeView.SwipeRecyclerView
         android:id="@+id/swipeView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

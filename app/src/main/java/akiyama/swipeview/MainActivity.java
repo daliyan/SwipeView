@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import akiyama.library.swipeView.SwipeRecyclerView;
+import akiyama.swipe.swipeView.SwipeRecyclerView;
 
 
 public class MainActivity extends ActionBarActivity {
