@@ -3,9 +3,12 @@ package akiyama.swipe.swipe;
 import android.graphics.drawable.Drawable;
 
 /**
- * Created by Administrator on 2015/8/13.
+ * 该类直接放弃使用,直接使用View来替代。
+ * @see akiyama.swipe.swipeView.SwipeMenuButtonView
+ * @author zhiwu_yan
+ * @since 2015/8/13
  */
-public class SwipeMenuItem {
+ public class SwipeMenuItem {
 
     private int id;
     private String text;

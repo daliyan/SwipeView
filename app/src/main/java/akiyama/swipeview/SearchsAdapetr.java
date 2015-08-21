@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,8 +35,8 @@ public class SearchsAdapetr extends RecyclerViewAdapter<SearchsAdapetr.SearchsVi
     }
 
     @Override
-    public SearchsViewHolder onCreatViewHodler(View v, List<SwipeMenuItem> menuItems, SwipeItemLayout swipeItemLayout, int layoutId) {
-        return new SearchsViewHolder(v,menuItems,swipeItemLayout,layoutId);
+    public SearchsViewHolder onCreatViewHodler(View v, List<? extends View> menuViews, SwipeItemLayout swipeItemLayout, int layoutId) {
+        return new SearchsViewHolder(v,menuViews,swipeItemLayout,layoutId);
     }
 
     @Override
@@ -44,28 +45,27 @@ public class SearchsAdapetr extends RecyclerViewAdapter<SearchsAdapetr.SearchsVi
     }
 
     @Override
-    public List<SwipeMenuItem> creatMenuView() {
-        List<SwipeMenuItem> menuItems = new ArrayList<>();
-        menuItems =new ArrayList<>();
+    public List<? extends View> creatMenuView() {
+        List<Button> menuViews = new ArrayList<>();
 
-        SwipeMenuItem a=new SwipeMenuItem();
-        a.setBackgroundResId(R.drawable.save_btn_bg);
-        a.setWidth((int) dipToPx(60));
-        a.setIcon(null);
-        a.setText("删除");
-        a.setTitleColor(Color.parseColor("#ffffff"));
-        a.setTitleSize(14);
-        menuItems.add(a);
+        Button menu1=new Button(mContext);
+        menu1.setBackgroundResource(R.drawable.save_btn_bg);
+        menu1.setLayoutParams(new ViewGroup.LayoutParams((int) dipToPx(60), ViewGroup.LayoutParams.MATCH_PARENT));
+        menu1.setCompoundDrawables(mContext.getResources().getDrawable(R.drawable.ic_camera_alt_white_24dp),null,null,null);
+        menu1.setText("删除");
+        menu1.setTextColor(Color.parseColor("#ffffff"));
+        menu1.setTextSize(14);
+        menuViews.add(menu1);
 
-        SwipeMenuItem b=new SwipeMenuItem();
-        b.setBackgroundResId(R.drawable.save_btn_bg);
-        b.setWidth((int) dipToPx(80));
-        b.setIcon(null);
-        b.setText("取消");
-        b.setTitleColor(Color.parseColor("#ffffff"));
-        b.setTitleSize(14);
-        menuItems.add(b);
-        return menuItems;
+        Button menu2=new Button(mContext);
+        menu2.setBackgroundResource(R.drawable.save_btn_bg);
+        menu2.setLayoutParams(new ViewGroup.LayoutParams((int) dipToPx(60), ViewGroup.LayoutParams.MATCH_PARENT));
+        menu2.setCompoundDrawables(mContext.getResources().getDrawable(R.drawable.ic_camera_alt_white_24dp),null,null,null);
+        menu2.setText("取消");
+        menu2.setTextColor(Color.parseColor("#ffffff"));
+        menu2.setTextSize(14);
+        menuViews.add(menu2);
+        return menuViews;
     }
 
     @Override
@@ -95,6 +95,20 @@ public class SearchsAdapetr extends RecyclerViewAdapter<SearchsAdapetr.SearchsVi
             }
         });
 
+        holder.getSwipeItemLayout().setmSwipeMenuClick(new SwipeItemLayout.SwipeMenuClick() {
+            @Override
+            public void swipeMenuClickEvent(int position) {
+                switch (position){
+                    case 0:
+                        Toast.makeText(mContext,"删除事件执行",Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1:
+                        Toast.makeText(mContext,position+"取消事件执行",Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
+
     }
 
     @Override
@@ -105,7 +119,7 @@ public class SearchsAdapetr extends RecyclerViewAdapter<SearchsAdapetr.SearchsVi
     public static class SearchsViewHolder extends RecyclerViewAdapter.ViewHolder{
         public TextView mTitleTv;
         public CheckBox mSelectLabelCb;
-        public SearchsViewHolder(View v, List<SwipeMenuItem> menuItems, SwipeItemLayout swipeItemLayout, int layoutId) {
+        public SearchsViewHolder(View v, List<? extends View> menuItems, SwipeItemLayout swipeItemLayout, int layoutId) {
             super(v, menuItems, swipeItemLayout, layoutId);
             mTitleTv = (TextView) findSwipeViewById(R.id.label_name_tv);
             mSelectLabelCb = (CheckBox) findSwipeViewById(R.id.select_label_cb);

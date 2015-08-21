@@ -27,12 +27,12 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerViewAdapter.ViewHol
     /**
      * 创建布局ViewHolder
      * @param v
-     * @param menuItems
+     * @param menuViews
      * @param swipeItemLayout
      * @param layoutId
      * @return
      */
-    public abstract VH onCreatViewHodler(View v,List<SwipeMenuItem> menuItems,SwipeItemLayout swipeItemLayout,int layoutId);
+    public abstract VH onCreatViewHodler(View v,List<? extends View> menuViews,SwipeItemLayout swipeItemLayout,int layoutId);
 
     /**
      * 创建的ViewHolder对应的View,最底层的布局文件
@@ -46,7 +46,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerViewAdapter.ViewHol
      * 创建侧滑菜单
      * @return 菜单项目的SwipeMenuItem列表
      */
-    public abstract List<SwipeMenuItem> creatMenuView();
+    public abstract List<? extends View> creatMenuView();
 
     /**
      * 你附加的布局文件，最外层布局文件
@@ -65,7 +65,7 @@ public abstract class RecyclerViewAdapter<VH extends RecyclerViewAdapter.ViewHol
 
         private View mView;
         private SwipeItemLayout mSwipeItemLayout;
-        public ViewHolder(View v,List<SwipeMenuItem> menuItems,SwipeItemLayout swipeItemLayout,int layoutId) {
+        public ViewHolder(View v,List<? extends View> menuItems,SwipeItemLayout swipeItemLayout,int layoutId) {
             super(v);
             this.mView=v;
             mSwipeItemLayout = swipeItemLayout;

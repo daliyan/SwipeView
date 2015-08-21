@@ -1,7 +1,9 @@
 package akiyama.swipe.swipe;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,6 +24,7 @@ import akiyama.swipe.swipeView.SwipeMenuButtonView;
  */
 public class SwipeItemLayout extends LinearLayout {
 
+    private static final String TAG="SwipeItemLayout";
     /**
      * 按下和抬起 200毫秒以内就认为是单击事件
      */
@@ -59,6 +62,14 @@ public class SwipeItemLayout extends LinearLayout {
      * 菜单布局文件的宽度
      */
     private int mHolderWidth;
+
+    /**
+     * 菜单布局文件的宽度
+     */
+    private int mHolderHeight;
+
+    private int mDefaultHeight;//默认每个菜单的宽度
+
     /**
      * 需要附加布局的layoutId,一般用来显示我们列表中的内容
      */
@@ -68,6 +79,7 @@ public class SwipeItemLayout extends LinearLayout {
      * 菜单项目集合
      */
     private List<SwipeMenuItem> mSwipeItems;
+    private List<? extends View> mMenuViews;
     /**
      * 包含菜单的长度
      */
@@ -76,6 +88,10 @@ public class SwipeItemLayout extends LinearLayout {
      * 单击事件
      */
     private SwipeClick mSwipeClick;
+    /**
+     * 侧滑菜单事件
+     */
+    private SwipeMenuClick mSwipeMenuClick;
     /**
      * 按下屏幕的开始时间
      */
@@ -102,12 +118,12 @@ public class SwipeItemLayout extends LinearLayout {
     private void init(Context context) {
         this.mContext = context;
         mSwipeItems = new ArrayList<>();
+        mMenuViews = new ArrayList<>();
         mScroller = new Scroller(context);
         setOrientation(LinearLayout.HORIZONTAL);
         mView = View.inflate(context, R.layout.layout_custem_swipe, this);//附加merge布局
         mContentLl = (LinearLayout) mView.findViewById(R.id.item_content_ll);//具体内容
         mMenuLl = (LinearLayout) mView.findViewById(R.id.item_menu_ll);//需要添加的菜单项目
-        setBackgroundResource(R.drawable.select_bg);
     }
 
 
@@ -122,15 +138,15 @@ public class SwipeItemLayout extends LinearLayout {
             mIsSlide = true;
         }
         switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
+            case MotionEvent.ACTION_DOWN:
                 mStartTime = Calendar.getInstance().getTimeInMillis();
                 if (!mScroller.isFinished()) {
                     mScroller.abortAnimation();
                 }
                 setPressed(!mIsSlide);
                 break;
-            }
-            case MotionEvent.ACTION_MOVE: {
+
+            case MotionEvent.ACTION_MOVE:
                 int deltaX = x - mLastX;
                 int deltaY = y - mLastY;
                 //判断是否横向滑动
@@ -138,18 +154,18 @@ public class SwipeItemLayout extends LinearLayout {
                     break;
                 }
                 // 计算滑动终点是否合法，防止滑动越界
-                int newScrollX = scrollX - deltaX;
+                int newMoveScrollX = scrollX - deltaX;
                 if (deltaX != 0) {
-                    if (newScrollX < 0) {
-                        newScrollX = 0;
-                    } else if (newScrollX > mHolderWidth) {
-                        newScrollX = mHolderWidth;
+                    if (newMoveScrollX < 0) {
+                        newMoveScrollX = 0;
+                    } else if (newMoveScrollX > mHolderWidth) {
+                        newMoveScrollX = mHolderWidth;
                     }
-                    scrollTo(newScrollX, 0);
+                    scrollTo(newMoveScrollX, 0);
                 }
                 break;
-            }
-            case MotionEvent.ACTION_UP: {
+
+            case MotionEvent.ACTION_UP:
                 long endTime = Calendar.getInstance().getTimeInMillis();
                 //当点击时间 < CLICK_MAX_TIME,并且没有左滑的时候响应点击事件
                 if(mStartTime !=0 && endTime - mStartTime < CLICK_MAX_TIME && !mIsSlide){
@@ -157,16 +173,15 @@ public class SwipeItemLayout extends LinearLayout {
                         mSwipeClick.swipeLayoutClickEvent();
                     }
                 }
-                int newScrollX = 0;
-                // 这里做了下判断，当松开手的时候，会自动向两边滑动，具体向哪边滑，要看当前所处的位置
+                int newUpScrollX = 0;
                 if (scrollX - mHolderWidth * 0.5 > 0) {
-                    newScrollX = mHolderWidth;
+                    newUpScrollX = mHolderWidth;
                 }
-                // 慢慢滑向终点
-                smoothScrollTo(newScrollX, 0);
+                //滑向终点
+                smoothScrollTo(newUpScrollX, 0);
                 setPressed(false);//移除点击效果
                 break;
-            }
+
             default:
                 setPressed(false);
                 break;
@@ -189,15 +204,15 @@ public class SwipeItemLayout extends LinearLayout {
     /**
      * 添加附加布局和菜单项
      * @param mLayoutId
-     * @param mSwipeItems
+     * @param menuViews
      */
-    public void setLayoutAndMenu(int mLayoutId,List<SwipeMenuItem> mSwipeItems){
+    public void setLayoutAndMenu(int mLayoutId,List<? extends View> menuViews){
         setLayoutId(mLayoutId);
-        setSwipeMenuItems(mSwipeItems);
+        setSwipeMenuView(menuViews);
     }
 
     /**
-     * 需要设置的菜单项
+     * 需要设置的菜单项 ,废弃掉了。使用新的方法setSwipeMenuView
      * @param mSwipeItems
      */
     private void setSwipeMenuItems(List<SwipeMenuItem> mSwipeItems) {
@@ -206,9 +221,18 @@ public class SwipeItemLayout extends LinearLayout {
     }
 
     /**
+     * 直接设置侧滑按钮菜单，可以设置复杂样式,侵入性更低
+     * @param menuViews
+     */
+    private void setSwipeMenuView(List<? extends View> menuViews){
+        this.mMenuViews = menuViews;
+        setMenusView();
+    }
+
+    /**
      * 设置侧滑菜单项
      */
-    public void setMenuItem(){
+    private void setMenuItem(){
         if(mSwipeItems!=null && mSwipeItems.size()>0){
             mMenuCount = mSwipeItems.size();
             mHolderWidth =0;
@@ -216,6 +240,45 @@ public class SwipeItemLayout extends LinearLayout {
                 SwipeMenuButtonView swipeMenuButtonView=new SwipeMenuButtonView(mContext,mSwipeItems.get(i));
                 mHolderWidth += mSwipeItems.get(i).getWidth();//动态计算菜单所占的空间
                 mMenuLl.addView(swipeMenuButtonView);
+
+                final int menuPosition = i;
+                //侧滑菜单单击菜单事件
+                swipeMenuButtonView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSwipeMenuClick.swipeMenuClickEvent(menuPosition);
+                    }
+                });
+            }
+            //需要重新设置菜单布局的大小，否则默认是0
+            LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(mHolderWidth,  LinearLayout.LayoutParams.MATCH_PARENT);
+            mMenuLl.setLayoutParams(params);
+        }
+    }
+
+    /**
+     * 设置侧滑菜单项
+     */
+    private void setMenusView(){
+        if(mMenuViews!=null && mMenuViews.size()>0){
+            mMenuCount = mMenuViews.size();
+            mHolderWidth =0;
+            for(int i=0;i<mMenuCount;i++){
+                mMenuLl.addView(mMenuViews.get(i));
+                if(mMenuViews.get(i).getLayoutParams()!=null){
+                    mHolderWidth += mMenuViews.get(i).getLayoutParams().width;//动态计算菜单所占的空间
+                }else{
+                    mHolderWidth += (int) dipToPx(60);//默认每个按钮的高度是60dip
+                    Log.e(TAG,"erro:LayoutParams is null");
+                }
+                final int menuPosition = i;
+                //侧滑菜单单击菜单事件
+                mMenuViews.get(i).setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mSwipeMenuClick.swipeMenuClickEvent(menuPosition);
+                    }
+                });
             }
             //需要重新设置菜单布局的大小，否则默认是0
             LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(mHolderWidth,  LinearLayout.LayoutParams.MATCH_PARENT);
@@ -261,15 +324,48 @@ public class SwipeItemLayout extends LinearLayout {
         invalidate();
     }
 
-    public void setSwipeClick(SwipeClick mSwipeClick) {
-        this.mSwipeClick = mSwipeClick;
+    private float dipToPx(float dip){
+        final float scale = Resources.getSystem().getDisplayMetrics().density;
+        return  (dip * scale + 0.5f);
+    }
+
+    /**
+     * 设置item的点击事件
+     * @param swipeClick
+     */
+    public void setSwipeClick(SwipeClick swipeClick) {
+        this.mSwipeClick = swipeClick;
+    }
+
+    /**
+     * 设置侧滑菜单项目的点击事件
+     * @param swipeMenuClick
+     */
+    public void setmSwipeMenuClick(SwipeMenuClick swipeMenuClick){
+        this.mSwipeMenuClick = swipeMenuClick;
     }
 
     /**
      * 单击事件接口
      */
     public interface SwipeClick{
+        /**
+         * 单击item事件
+         */
         public void swipeLayoutClickEvent();
+
+
+    }
+
+    /**
+     * 单击对应侧滑菜单接口
+     */
+    public interface SwipeMenuClick{
+        /**
+         * 单击对应侧滑菜单的事件
+         * @param position 侧滑菜单的顺序位置
+         */
+        public void swipeMenuClickEvent(int position);
     }
 
 }
