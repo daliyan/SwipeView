@@ -3,7 +3,7 @@
 ### gradle引用：
 ```
 dependencies {
-	compile 'akiyama.swipe:library:2.0'
+	compile 'akiyama.swipe:library:2.1'
 }
 ```
 ###使用方法：
