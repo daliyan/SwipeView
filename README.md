@@ -1,9 +1,11 @@
-# SwipeView
+# SwipeView使用说明
 具有侧滑菜单的列表类型View,目前匹配了RecyclerView,后续将陆续适配ListView、GridView等控件。
 ### gradle引用：
+```
 dependencies {
 	compile 'akiyama.swipe:library:2.0'
 }
+```
 ###使用方法：
 - 自定义继承RecyclerViewAdapter对应控件适配器 
 - 实现对应抽象方法：
