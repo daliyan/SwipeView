@@ -1,5 +1,7 @@
 # SwipeView使用说明
 具有侧滑菜单的列表类型View,目前匹配了RecyclerView,后续将陆续适配ListView、GridView等控件。
+### 显示效果
+![侧滑效果](https://github.com/daliyan/SwipeView/blob/master/app/pic/exp_pic.jpeg?raw=true)
 ### gradle引用：
 ```
 dependencies {
